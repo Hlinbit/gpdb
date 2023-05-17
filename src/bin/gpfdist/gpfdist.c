@@ -705,6 +705,31 @@ static void parse_command_line(int argc, const char* const argv[],
 	if (!is_valid_timeout(opt.t))
 		usage_error("Error: -t timeout must be between 2 and 7200, or 0 for no timeout", 0);
 
+#ifndef WIN32
+	char* value = getenv("GPFDIST_DELAY_CLOSURE");
+    if (value != NULL) 
+	{
+        opt.w = atoi(value);
+		gprint(NULL, "GPFDIST_DELAY_CLOSURE is %d.\n", opt.w);
+    } 
+	else 
+	{
+        gprint(NULL, "GPFDIST_DELAY_CLOSURE is not set.\n");
+    }
+#else
+	TCHAR buffer[512];
+    DWORD size = GetEnvironmentVariable("GPFDIST_DELAY_CLOSURE", buffer, sizeof(buffer) / sizeof(TCHAR));
+    if (size > 0) 
+	{
+		opt.w = strtol(buffer, NULL, 10);
+        gprint(NULL, "GPFDIST_DELAY_CLOSURE is %d.\n", opt.w);
+    } 
+	else 
+	{
+        gprint(NULL, "GPFDIST_DELAY_CLOSURE is not set.\n");
+	}
+#endif
+
 	if (!is_valid_session_timeout(opt.w))
 		usage_error("Error: -w timeout must be between 1 and 7200, or 0 for no timeout", 0);
 

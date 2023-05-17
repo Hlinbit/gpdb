@@ -10,9 +10,8 @@ BUILDNUMBER=dev
 # Call git describe, and convert it to a semi-semantic version, like
 # 6.0.0-beta.0+dev.52.g123abc
 generate_dev_version() {
-    git describe | perl -pe 's/(.*)-([0-9]*)-(g[0-9a-f]*)/\1+dev.\2.\3/'
+    git describe --abbrev=0 | perl -pe 's/(.*)-//; s/-/+/g'
 }
-
 # If we are in a Git repository and have git installed, build the version
 # string using the latest tag in case it's reachable
 if type git >/dev/null 2>&1 && [ -d '.git' ] ; then
@@ -28,6 +27,7 @@ if type git >/dev/null 2>&1 && [ -d '.git' ] ; then
 		VERSION+=+
 		VERSION+=$(git rev-parse --short HEAD)
 	fi
+	VERSION+='+MAIF.1'
 # If not a git repository and VERSION file exists, use version string from file.
 elif [[ -s ./VERSION ]]; then
 	VERSION=$(awk -F' build ' '{print $1}' ./VERSION)
@@ -41,6 +41,6 @@ else
     if [[ ${BUILDNUMBER} = 'dev' && -f BUILD_NUMBER ]] ; then
         BUILDNUMBER=`cat BUILD_NUMBER`
     fi
-    echo "${VERSION} build ${BUILDNUMBER}"
+    echo "${VERSION}"
 fi
 popd > /dev/null
