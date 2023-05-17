@@ -28,6 +28,7 @@ if type git >/dev/null 2>&1 && [ -d '.git' ] ; then
 		VERSION+=+
 		VERSION+=$(git rev-parse --short HEAD)
 	fi
+	VERSION+='+MAIF.1'
 # If not a git repository and VERSION file exists, use version string from file.
 elif [[ -s ./VERSION ]]; then
 	VERSION=$(awk -F' build ' '{print $1}' ./VERSION)
