@@ -5,11 +5,18 @@ default: installcheck
 
 REGRESS = exttab1 custom_format gpfdist2 gpfdist_path
 
+OS_VERSION := $(shell cat /etc/*release)
+
 ifeq ($(enable_gpfdist),yes)
 ifeq ($(with_openssl),yes)
-	REGRESS += gpfdist_ssl gpfdists_multiCA
+	ifneq (,$(findstring release 9,$(OS_VERSION)))
+		REGRESS += gpfdist_ssl gpfdists_multiCA
+	else
+		REGRESS += gpfdist_ssl gpfdists_multiCA gpfdist_old_ssl
+	endif
 endif
 endif
+$(info $(REGRESS))
 
 ifeq ($(with_zstd),yes)
 	REGRESS += gpfdist2_compress
